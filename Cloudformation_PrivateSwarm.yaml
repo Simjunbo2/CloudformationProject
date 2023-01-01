@@ -1,0 +1,306 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "Swarm Cluster"
+
+#Param
+
+Parameters:
+  ImageID:
+    Description: Please Type the EC2 Image ID
+    Type: String
+    Default: ami-035233c9da2fabf52
+  CidrBlock:
+    Description: Please type the CidrBlock
+    Type: String
+    Default: 10.0.0.0/16
+  EC2KeyPair:
+    Description: Please select EC2 Key name
+    Type: AWS::EC2::KeyPair::KeyName
+
+##Resource
+
+Resources:
+
+  SwarmVPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: !Sub ${CidrBlock}
+      Tags:
+        - Key: Name
+          Value: "SwarmVPC"
+  
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref SwarmVPC
+      InternetGatewayId: !Ref InternetGateway
+  
+  ##Public Route Table
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SwarmVPC
+
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  
+  ##SUBNET
+
+  SwarmSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref SwarmVPC
+      AvailabilityZone: ap-northeast-2a
+      CidrBlock: !Select [0, !Cidr [ !GetAtt SwarmVPC.CidrBlock, 1, 8]]
+      Tags:
+        - Key: Name
+          Value: "SwarmSubnet"
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SwarmSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetNetworkAclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      SubnetId: !Ref SwarmSubnet
+      NetworkAclId: !GetAtt
+        - SwarmVPC
+        - DefaultNetworkAcl        
+
+  ##Cluster
+
+MasterNode:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Sub ${ImageID}
+      InstanceType: t3.micro
+      KeyName: !Ref EC2KeyPair
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 30
+      Tags:
+        - Key: Name
+          Value: "MasterNode"
+      NetworkInterfaces:
+        - DeviceIndex: '0'
+          SubnetId: !Ref SwarmSubnet
+          AssociatePublicIpAddress: true
+          PrivateIpAddress: 10.0.0.100
+          GroupSet: [ !GetAtt [ MasterSG, GroupId ]]
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/env bash
+            sudo yum -y install docker                                        
+            sudo systemctl restart docker && systemctl enable docker         
+            sudo chmod 666 /var/run/docker.sock
+            sudo usermod -aG docker $(whoami)
+            sudo service docker restart
+            sudo curl -L "https://github.com/docker/compose/release/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            docker swarm init > .MasterSwarmTocken
+            sudo amazon-linux-extras install ansible2
+            sudo ssh-keygen -t rsa -N "" -f ~/.ssh/my.key
+            sudo ssh-copy-id -i ~/.ssh/my.key.pub ec2-user@10.0.0.101
+            sudo ssh-copy-id -i ~/.ssh/my.key.pub ec2-user@10.0.0.102 
+            sudo ssh-copy-id -i ~/.ssh/my.key.pub ec2-user@10.0.0.103
+            echo -e "[Workernode]\n10.0.0.100\n10.0.0.101\n10.0.0.102\n10.0.0.103" > /etc/ansible/hosts
+            sudo sed -n 5p .MasterSwarmTocken > /swarmjoin.sh
+            sudo chmod 755 /swarmjoin.sh
+            sudo ansible Workernode -m copy -a 'src=/swarmjoin.sh dest=/swarmjoin.sh'
+            sudo ansible Workernode -m shell -a '/swarmjoin.sh'
+            sudo yum install -y java-11-amazon-corretto.x86_64
+            docker run -dit -p 8080:8080 -p 50000:50000 --name jenkins-server -v jenkins_home:/var/jenkins_home -v /usr/bin/docker:/usr/bin/docker \
+            -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/jvm:/usr/lib/jvm --restart=always jenkins/jenkins:latest 
+            docker exec -it jenkins-server /bin/bash
+                        
+  WorkerNode1:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Sub ${ImageID}
+      InstanceType: t3.micro
+      KeyName: !Ref EC2KeyPair
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 30
+      Tags:
+        - Key: Name
+          Value: WorkerNode1
+      NetworkInterfaces:
+        - DeviceIndex: '0'
+          SubnetId: !Ref SwarmSubnet
+          AssociatePublicIpAddress: true
+          PrivateIpAddress: 10.0.0.101
+          GroupSet: [ !GetAtt [ MasterSG, GroupId ]]
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            sudo yum -y install docker && systemctl enable docker
+            sudo chmod 666 /var/run/docker.sock
+            sudo usermod -aG docker $(whoami)
+            sudo service docker restart
+            sudo curl -L "https://github.com/docker/compose/release/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+ 
+  WorkerNode2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Sub ${ImageID}
+      InstanceType: t3.micro
+      KeyName: !Ref EC2KeyPair
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 30
+      Tags:
+        - Key: Name
+          Value: WorkerNode2
+      NetworkInterfaces:
+        - DeviceIndex: '0'
+          SubnetId: !Ref SwarmSubnet
+          AssociatePublicIpAddress: true
+          PrivateIpAddress: 10.0.0.102
+          GroupSet: [ !GetAtt [ MasterSG, GroupId ]]
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            sudo yum -y install docker && systemctl enable docker
+            sudo chmod 666 /var/run/docker.sock
+            sudo usermod -aG docker $(whoami)
+            sudo service docker restart
+            sudo curl -L "https://github.com/docker/compose/release/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+ 
+  WorkerNode3:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Sub ${ImageID}
+      InstanceType: t3.micro
+      KeyName: !Ref EC2KeyPair
+      Tags:
+        - Key: Name
+          Value: WorkerNode3
+      NetworkInterfaces:
+        - DeviceIndex: '0'
+          SubnetId: !Ref SwarmSubnet
+          AssociatePublicIpAddress: true
+          PrivateIpAddress: 10.0.0.103
+          GroupSet: [ !GetAtt [ MasterSG, GroupId ]]
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            sudo yum -y install docker && systemctl enable docker
+            sudo chmod 666 /var/run/docker.sock
+            sudo usermod -aG docker $(whoami)
+            sudo service docker restart
+            sudo curl -L "https://github.com/docker/compose/release/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+  
+
+
+  MasterSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref SwarmVPC
+      GroupDescription: Master NODE(open EC2=80, 22, SWARM=7946, 4789, JENKINS=8080, 50000)
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: tcp
+        FromPort: 8080
+        ToPort: 8080
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: tcp
+        FromPort: 50000
+        ToPort: 50000
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: tcp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: udp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: tcp
+        FromPort: 2377  
+        ToPort: 2377
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: udp
+        FromPort: 4789
+        ToPort: 4789
+        CidrIp: 0.0.0.0/0
+
+      - IpProtocol: tcp
+        FromPort: 3306 
+        ToPort: 3306
+        CidrIp: 0.0.0.0/0
+
+
+
+  WorkerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref SwarmVPC
+      GroupDescription: Master NODE(open EC2=80, 22, SWARM=7946, 4789, JENKINS=8080, 50000)
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3306 
+        ToPort: 3306
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 8080 
+        ToPort: 8080
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: udp
+        FromPort: 7946
+        ToPort: 7946
+      - IpProtocol: udp
+        FromPort: 4789
+        ToPort: 4789
+        CidrIp: 0.0.0.0/0
