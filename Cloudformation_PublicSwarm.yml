@@ -116,34 +116,6 @@ Resources:
             sudo chmod 755 /swarmjoin.sh
             sudo amazon-linux-extras install ansible2
             echo -e "[Workernode]\n10.0.0.100\n10.0.0.101\n10.0.0.102\n10.0.0.103" > /etc/ansible/hosts
-            echo -e "-----BEGIN RSA PRIVATE KEY-----
-            MIIEpAIBAAKCAQEAs1xlee6jEOHKzQxKzLkus0XmT6vvoS/gFp7CSDB4kvM5DiOj
-            Ns8Cy4m0otyHFozxiviENw5T33gUpwXSkxw3ayfHEIS5IWngmNsbo6I0PiPqJJtH
-            s9guTCHGurjYul4N/xb2r96wnbVJR4KPgCFr3yjXTWDYBDhqUA8YAkYBIN+/1BO8
-            UeR1/zeaIuuJ6/CH+i/pKsxueKiZjaVfpwB42hs25m5qz000NLRZBTRppVjyc0Nn
-            GkY0m53a05hM8ZTjAQpnbt3aqZC4VEh9KNfoM5HsjE0YkJ007VaFlYvJ1LAZhF06
-            G9/OPufu69ZuzeDeF2DQWKl8umoTLQpAzuJcBQIDAQABAoIBAGvyePRopmWbryW3
-            dzE9ZpjowdNDhKY7HSAgDofJ/Fdc4QLcefeboXAEgd3e4cK1sw3TwicsjVgaejuH
-            qpN1UPlB6HHNn2o3wb/dZwYVsmGP1fSQLBhWTI7vaR6p725C+yOCm5d/bEaOe/r4
-            3grckoKtnt7oITpxBbMHUojTvwwb+uBdzYA54aWaRDIbevEniLGBcG7D3dAoGJ5s
-            wjb10kRsFBbp5pkMWu47W7QwTT7Gf/E0aqufJFxqGcLB9BKRbLrGKQuHZ3QuEjXJ
-            sl6bVb5Yad2jsur6iWwuSPyr81kihqTZRn+oTzOJKvn7GeqNEvZItMDDsagckdo6
-            EwSTx0UCgYEA6t60/5UwWQwMDxPnC80elDc6wdWmbcxoXTNpnIvpcPzoQdhlYAi3
-            posSe/u2I9+svU5O7u7PTG+JcrltYzOpXfLJfRO5U1mLD9NHEl5XtweJ1lLFoaR1
-            87mqW2P/jGhGrl0QphouTHD15uBqOQ75L6NYK5LR7sRG3Gbt5xkbEaMCgYEAw39C
-            ny4EQCg0GvX+JQ4n/wJV11mwlNkZm0IFmi3nxCygRXh9liTZyxjD4UI+ve2Twpqk
-            hZDQHgaWmj3GlFM6WZacU74InruJzmidhCdIWmNSdWzdSH+3M8MZSv8G8L7fdDsq
-            rTjgNnVrt1lJifyR9a7OaWb7czjttsjw5vm1RjcCgYAyngSMAG8HAd2ncjadCHvK
-            nYyAMbdIeoETdP0Ry+VngFndtvFCHR7XOammJr0+RfpIYhQI0lbCtlb87pFwi7W4
-            lZZu6k1KdUXPB02N298zhuBh3DzTdUomWKEqSQbOD7sL4OqxoXrQ5pdYRo0d9ugl
-            KCLcYSv1NT/ASD6FS5fV2QKBgQC0Tf8ICMzqzymfZBnN20yQKXs6bwIphkHTrAS2
-            unfzuqTm7cYGYF5urpyaeRqc2S1aYn4yoekQiEsGXstzqX87eWkc4zvYCmeC84Gz
-            jPdyRgCbRJiicQhquRnuzV99Us2MybUGplpEX+/E3piwpz2HNn4xQEXRc0PrPVDR
-            9qR16QKBgQDSv3DrJcYzrTMSSyVRiA/q+e6V6zO7fdpJfEfXGNYMOfR8VkDBPbf1
-            wFnq+dZXsUq65rxxzSnfaadvY/fTq3NjFNpPRVl2PPLllw8p3mUfF34ITiHT7vaX
-            AmTjGl+ztXTlixdsZGfmHUlI62feC7CwRtmjeRfCK6OHPYQKV8sn7Q==
-            -----END RSA PRIVATE KEY-----" > /abore
-            sudo chmod 600 /abore
             sudo yum install -y java-11-amazon-corretto.x86_64
             docker run -dit -p 8080:8080 -p 50000:50000 --name jenkins-server -v jenkins_home:/var/jenkins_home -v /usr/bin/docker:/usr/bin/docker \
             -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/jvm:/usr/lib/jvm --restart=always jenkins/jenkins:latest 
@@ -179,36 +151,8 @@ Resources:
             sudo service docker restart
             sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
-            echo -e "-----BEGIN RSA PRIVATE KEY-----
-            MIIEpAIBAAKCAQEAs1xlee6jEOHKzQxKzLkus0XmT6vvoS/gFp7CSDB4kvM5DiOj
-            Ns8Cy4m0otyHFozxiviENw5T33gUpwXSkxw3ayfHEIS5IWngmNsbo6I0PiPqJJtH
-            s9guTCHGurjYul4N/xb2r96wnbVJR4KPgCFr3yjXTWDYBDhqUA8YAkYBIN+/1BO8
-            UeR1/zeaIuuJ6/CH+i/pKsxueKiZjaVfpwB42hs25m5qz000NLRZBTRppVjyc0Nn
-            GkY0m53a05hM8ZTjAQpnbt3aqZC4VEh9KNfoM5HsjE0YkJ007VaFlYvJ1LAZhF06
-            G9/OPufu69ZuzeDeF2DQWKl8umoTLQpAzuJcBQIDAQABAoIBAGvyePRopmWbryW3
-            dzE9ZpjowdNDhKY7HSAgDofJ/Fdc4QLcefeboXAEgd3e4cK1sw3TwicsjVgaejuH
-            qpN1UPlB6HHNn2o3wb/dZwYVsmGP1fSQLBhWTI7vaR6p725C+yOCm5d/bEaOe/r4
-            3grckoKtnt7oITpxBbMHUojTvwwb+uBdzYA54aWaRDIbevEniLGBcG7D3dAoGJ5s
-            wjb10kRsFBbp5pkMWu47W7QwTT7Gf/E0aqufJFxqGcLB9BKRbLrGKQuHZ3QuEjXJ
-            sl6bVb5Yad2jsur6iWwuSPyr81kihqTZRn+oTzOJKvn7GeqNEvZItMDDsagckdo6
-            EwSTx0UCgYEA6t60/5UwWQwMDxPnC80elDc6wdWmbcxoXTNpnIvpcPzoQdhlYAi3
-            posSe/u2I9+svU5O7u7PTG+JcrltYzOpXfLJfRO5U1mLD9NHEl5XtweJ1lLFoaR1
-            87mqW2P/jGhGrl0QphouTHD15uBqOQ75L6NYK5LR7sRG3Gbt5xkbEaMCgYEAw39C
-            ny4EQCg0GvX+JQ4n/wJV11mwlNkZm0IFmi3nxCygRXh9liTZyxjD4UI+ve2Twpqk
-            hZDQHgaWmj3GlFM6WZacU74InruJzmidhCdIWmNSdWzdSH+3M8MZSv8G8L7fdDsq
-            rTjgNnVrt1lJifyR9a7OaWb7czjttsjw5vm1RjcCgYAyngSMAG8HAd2ncjadCHvK
-            nYyAMbdIeoETdP0Ry+VngFndtvFCHR7XOammJr0+RfpIYhQI0lbCtlb87pFwi7W4
-            lZZu6k1KdUXPB02N298zhuBh3DzTdUomWKEqSQbOD7sL4OqxoXrQ5pdYRo0d9ugl
-            KCLcYSv1NT/ASD6FS5fV2QKBgQC0Tf8ICMzqzymfZBnN20yQKXs6bwIphkHTrAS2
-            unfzuqTm7cYGYF5urpyaeRqc2S1aYn4yoekQiEsGXstzqX87eWkc4zvYCmeC84Gz
-            jPdyRgCbRJiicQhquRnuzV99Us2MybUGplpEX+/E3piwpz2HNn4xQEXRc0PrPVDR
-            9qR16QKBgQDSv3DrJcYzrTMSSyVRiA/q+e6V6zO7fdpJfEfXGNYMOfR8VkDBPbf1
-            wFnq+dZXsUq65rxxzSnfaadvY/fTq3NjFNpPRVl2PPLllw8p3mUfF34ITiHT7vaX
-            AmTjGl+ztXTlixdsZGfmHUlI62feC7CwRtmjeRfCK6OHPYQKV8sn7Q==
-            -----END RSA PRIVATE KEY-----" > /abore
-            sudo chmod 600 /abore
             sudo scp -i /abore -P 22  -o StrictHostKeyChecking=no  ec2-user@10.0.0.100:/swarmjoin.sh /swarmjoin.sh
-            sudo /swarmjoin.sh
+            sudo ./swarmjoin.sh
  
   WorkerNode2:
     Type: AWS::EC2::Instance
@@ -240,34 +184,6 @@ Resources:
             sudo service docker restart
             sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
-            echo -e "-----BEGIN RSA PRIVATE KEY-----
-            MIIEpAIBAAKCAQEAs1xlee6jEOHKzQxKzLkus0XmT6vvoS/gFp7CSDB4kvM5DiOj
-            Ns8Cy4m0otyHFozxiviENw5T33gUpwXSkxw3ayfHEIS5IWngmNsbo6I0PiPqJJtH
-            s9guTCHGurjYul4N/xb2r96wnbVJR4KPgCFr3yjXTWDYBDhqUA8YAkYBIN+/1BO8
-            UeR1/zeaIuuJ6/CH+i/pKsxueKiZjaVfpwB42hs25m5qz000NLRZBTRppVjyc0Nn
-            GkY0m53a05hM8ZTjAQpnbt3aqZC4VEh9KNfoM5HsjE0YkJ007VaFlYvJ1LAZhF06
-            G9/OPufu69ZuzeDeF2DQWKl8umoTLQpAzuJcBQIDAQABAoIBAGvyePRopmWbryW3
-            dzE9ZpjowdNDhKY7HSAgDofJ/Fdc4QLcefeboXAEgd3e4cK1sw3TwicsjVgaejuH
-            qpN1UPlB6HHNn2o3wb/dZwYVsmGP1fSQLBhWTI7vaR6p725C+yOCm5d/bEaOe/r4
-            3grckoKtnt7oITpxBbMHUojTvwwb+uBdzYA54aWaRDIbevEniLGBcG7D3dAoGJ5s
-            wjb10kRsFBbp5pkMWu47W7QwTT7Gf/E0aqufJFxqGcLB9BKRbLrGKQuHZ3QuEjXJ
-            sl6bVb5Yad2jsur6iWwuSPyr81kihqTZRn+oTzOJKvn7GeqNEvZItMDDsagckdo6
-            EwSTx0UCgYEA6t60/5UwWQwMDxPnC80elDc6wdWmbcxoXTNpnIvpcPzoQdhlYAi3
-            posSe/u2I9+svU5O7u7PTG+JcrltYzOpXfLJfRO5U1mLD9NHEl5XtweJ1lLFoaR1
-            87mqW2P/jGhGrl0QphouTHD15uBqOQ75L6NYK5LR7sRG3Gbt5xkbEaMCgYEAw39C
-            ny4EQCg0GvX+JQ4n/wJV11mwlNkZm0IFmi3nxCygRXh9liTZyxjD4UI+ve2Twpqk
-            hZDQHgaWmj3GlFM6WZacU74InruJzmidhCdIWmNSdWzdSH+3M8MZSv8G8L7fdDsq
-            rTjgNnVrt1lJifyR9a7OaWb7czjttsjw5vm1RjcCgYAyngSMAG8HAd2ncjadCHvK
-            nYyAMbdIeoETdP0Ry+VngFndtvFCHR7XOammJr0+RfpIYhQI0lbCtlb87pFwi7W4
-            lZZu6k1KdUXPB02N298zhuBh3DzTdUomWKEqSQbOD7sL4OqxoXrQ5pdYRo0d9ugl
-            KCLcYSv1NT/ASD6FS5fV2QKBgQC0Tf8ICMzqzymfZBnN20yQKXs6bwIphkHTrAS2
-            unfzuqTm7cYGYF5urpyaeRqc2S1aYn4yoekQiEsGXstzqX87eWkc4zvYCmeC84Gz
-            jPdyRgCbRJiicQhquRnuzV99Us2MybUGplpEX+/E3piwpz2HNn4xQEXRc0PrPVDR
-            9qR16QKBgQDSv3DrJcYzrTMSSyVRiA/q+e6V6zO7fdpJfEfXGNYMOfR8VkDBPbf1
-            wFnq+dZXsUq65rxxzSnfaadvY/fTq3NjFNpPRVl2PPLllw8p3mUfF34ITiHT7vaX
-            AmTjGl+ztXTlixdsZGfmHUlI62feC7CwRtmjeRfCK6OHPYQKV8sn7Q==
-            -----END RSA PRIVATE KEY-----" > /abore
-            sudo chmod 600 /abore
             sudo scp -i /abore -P 22  -o StrictHostKeyChecking=no  ec2-user@10.0.0.100:/swarmjoin.sh /swarmjoin.sh
             sudo /swarmjoin.sh
 
@@ -296,34 +212,6 @@ Resources:
             sudo service docker restart
             sudo curl -L "https://github.com/docker/compose/releases/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
-            echo -e "-----BEGIN RSA PRIVATE KEY-----
-            MIIEpAIBAAKCAQEAs1xlee6jEOHKzQxKzLkus0XmT6vvoS/gFp7CSDB4kvM5DiOj
-            Ns8Cy4m0otyHFozxiviENw5T33gUpwXSkxw3ayfHEIS5IWngmNsbo6I0PiPqJJtH
-            s9guTCHGurjYul4N/xb2r96wnbVJR4KPgCFr3yjXTWDYBDhqUA8YAkYBIN+/1BO8
-            UeR1/zeaIuuJ6/CH+i/pKsxueKiZjaVfpwB42hs25m5qz000NLRZBTRppVjyc0Nn
-            GkY0m53a05hM8ZTjAQpnbt3aqZC4VEh9KNfoM5HsjE0YkJ007VaFlYvJ1LAZhF06
-            G9/OPufu69ZuzeDeF2DQWKl8umoTLQpAzuJcBQIDAQABAoIBAGvyePRopmWbryW3
-            dzE9ZpjowdNDhKY7HSAgDofJ/Fdc4QLcefeboXAEgd3e4cK1sw3TwicsjVgaejuH
-            qpN1UPlB6HHNn2o3wb/dZwYVsmGP1fSQLBhWTI7vaR6p725C+yOCm5d/bEaOe/r4
-            3grckoKtnt7oITpxBbMHUojTvwwb+uBdzYA54aWaRDIbevEniLGBcG7D3dAoGJ5s
-            wjb10kRsFBbp5pkMWu47W7QwTT7Gf/E0aqufJFxqGcLB9BKRbLrGKQuHZ3QuEjXJ
-            sl6bVb5Yad2jsur6iWwuSPyr81kihqTZRn+oTzOJKvn7GeqNEvZItMDDsagckdo6
-            EwSTx0UCgYEA6t60/5UwWQwMDxPnC80elDc6wdWmbcxoXTNpnIvpcPzoQdhlYAi3
-            posSe/u2I9+svU5O7u7PTG+JcrltYzOpXfLJfRO5U1mLD9NHEl5XtweJ1lLFoaR1
-            87mqW2P/jGhGrl0QphouTHD15uBqOQ75L6NYK5LR7sRG3Gbt5xkbEaMCgYEAw39C
-            ny4EQCg0GvX+JQ4n/wJV11mwlNkZm0IFmi3nxCygRXh9liTZyxjD4UI+ve2Twpqk
-            hZDQHgaWmj3GlFM6WZacU74InruJzmidhCdIWmNSdWzdSH+3M8MZSv8G8L7fdDsq
-            rTjgNnVrt1lJifyR9a7OaWb7czjttsjw5vm1RjcCgYAyngSMAG8HAd2ncjadCHvK
-            nYyAMbdIeoETdP0Ry+VngFndtvFCHR7XOammJr0+RfpIYhQI0lbCtlb87pFwi7W4
-            lZZu6k1KdUXPB02N298zhuBh3DzTdUomWKEqSQbOD7sL4OqxoXrQ5pdYRo0d9ugl
-            KCLcYSv1NT/ASD6FS5fV2QKBgQC0Tf8ICMzqzymfZBnN20yQKXs6bwIphkHTrAS2
-            unfzuqTm7cYGYF5urpyaeRqc2S1aYn4yoekQiEsGXstzqX87eWkc4zvYCmeC84Gz
-            jPdyRgCbRJiicQhquRnuzV99Us2MybUGplpEX+/E3piwpz2HNn4xQEXRc0PrPVDR
-            9qR16QKBgQDSv3DrJcYzrTMSSyVRiA/q+e6V6zO7fdpJfEfXGNYMOfR8VkDBPbf1
-            wFnq+dZXsUq65rxxzSnfaadvY/fTq3NjFNpPRVl2PPLllw8p3mUfF34ITiHT7vaX
-            AmTjGl+ztXTlixdsZGfmHUlI62feC7CwRtmjeRfCK6OHPYQKV8sn7Q==
-            -----END RSA PRIVATE KEY-----" > /abore
-            sudo chmod 600 /abore
             sudo scp -i /abore -P 22  -o StrictHostKeyChecking=no  ec2-user@10.0.0.100:/swarmjoin.sh /swarmjoin.sh
             sudo /swarmjoin.sh
  
